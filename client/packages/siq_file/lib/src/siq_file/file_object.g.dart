@@ -8,14 +8,13 @@ part of 'file_object.dart';
 
 _$FileObjectImpl _$$FileObjectImplFromJson(Map<String, dynamic> json) =>
     _$FileObjectImpl(
-      path: json['path'] as String,
       type: $enumDecode(_$FileTypeEnumMap, json['type']),
+      path: json['path'] as String?,
       sha256: json['sha256'] as String?,
     );
 
 Map<String, dynamic> _$$FileObjectImplToJson(_$FileObjectImpl instance) {
   final val = <String, dynamic>{
-    'path': instance.path,
     'type': _$FileTypeEnumMap[instance.type]!,
   };
 
@@ -25,6 +24,7 @@ Map<String, dynamic> _$$FileObjectImplToJson(_$FileObjectImpl instance) {
     }
   }
 
+  writeNotNull('path', instance.path);
   writeNotNull('sha256', instance.sha256);
   return val;
 }

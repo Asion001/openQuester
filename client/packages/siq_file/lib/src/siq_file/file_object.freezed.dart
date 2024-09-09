@@ -20,8 +20,8 @@ FileObject _$FileObjectFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$FileObject {
-  String get path => throw _privateConstructorUsedError;
   FileType get type => throw _privateConstructorUsedError;
+  String? get path => throw _privateConstructorUsedError;
   String? get sha256 => throw _privateConstructorUsedError;
 
   /// Serializes this FileObject to a JSON map.
@@ -40,7 +40,7 @@ abstract class $FileObjectCopyWith<$Res> {
           FileObject value, $Res Function(FileObject) then) =
       _$FileObjectCopyWithImpl<$Res, FileObject>;
   @useResult
-  $Res call({String path, FileType type, String? sha256});
+  $Res call({FileType type, String? path, String? sha256});
 }
 
 /// @nodoc
@@ -58,19 +58,19 @@ class _$FileObjectCopyWithImpl<$Res, $Val extends FileObject>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? path = null,
     Object? type = null,
+    Object? path = freezed,
     Object? sha256 = freezed,
   }) {
     return _then(_value.copyWith(
-      path: null == path
-          ? _value.path
-          : path // ignore: cast_nullable_to_non_nullable
-              as String,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as FileType,
+      path: freezed == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String?,
       sha256: freezed == sha256
           ? _value.sha256
           : sha256 // ignore: cast_nullable_to_non_nullable
@@ -87,7 +87,7 @@ abstract class _$$FileObjectImplCopyWith<$Res>
       __$$FileObjectImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String path, FileType type, String? sha256});
+  $Res call({FileType type, String? path, String? sha256});
 }
 
 /// @nodoc
@@ -103,19 +103,19 @@ class __$$FileObjectImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? path = null,
     Object? type = null,
+    Object? path = freezed,
     Object? sha256 = freezed,
   }) {
     return _then(_$FileObjectImpl(
-      path: null == path
-          ? _value.path
-          : path // ignore: cast_nullable_to_non_nullable
-              as String,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as FileType,
+      path: freezed == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String?,
       sha256: freezed == sha256
           ? _value.sha256
           : sha256 // ignore: cast_nullable_to_non_nullable
@@ -127,22 +127,22 @@ class __$$FileObjectImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$FileObjectImpl extends _FileObject {
-  const _$FileObjectImpl({required this.path, required this.type, this.sha256})
+  const _$FileObjectImpl({required this.type, this.path, this.sha256})
       : super._();
 
   factory _$FileObjectImpl.fromJson(Map<String, dynamic> json) =>
       _$$FileObjectImplFromJson(json);
 
   @override
-  final String path;
-  @override
   final FileType type;
+  @override
+  final String? path;
   @override
   final String? sha256;
 
   @override
   String toString() {
-    return 'FileObject(path: $path, type: $type, sha256: $sha256)';
+    return 'FileObject(type: $type, path: $path, sha256: $sha256)';
   }
 
   @override
@@ -150,14 +150,14 @@ class _$FileObjectImpl extends _FileObject {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$FileObjectImpl &&
-            (identical(other.path, path) || other.path == path) &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.path, path) || other.path == path) &&
             (identical(other.sha256, sha256) || other.sha256 == sha256));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, path, type, sha256);
+  int get hashCode => Object.hash(runtimeType, type, path, sha256);
 
   /// Create a copy of FileObject
   /// with the given fields replaced by the non-null parameter values.
@@ -177,8 +177,8 @@ class _$FileObjectImpl extends _FileObject {
 
 abstract class _FileObject extends FileObject {
   const factory _FileObject(
-      {required final String path,
-      required final FileType type,
+      {required final FileType type,
+      final String? path,
       final String? sha256}) = _$FileObjectImpl;
   const _FileObject._() : super._();
 
@@ -186,9 +186,9 @@ abstract class _FileObject extends FileObject {
       _$FileObjectImpl.fromJson;
 
   @override
-  String get path;
-  @override
   FileType get type;
+  @override
+  String? get path;
   @override
   String? get sha256;
 

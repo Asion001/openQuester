@@ -11,5 +11,5 @@ class ImageFileConverter implements JsonConverter<FileObject, String> {
   }
 
   @override
-  String toJson(FileObject object) => object.path;
+  String toJson(FileObject object) => object.path ?? object.sha256!;
 }

@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
 import 'package:collection/collection.dart';
+import 'package:mason_logger/mason_logger.dart';
+import 'package:siq_file/src/getit.dart';
 
 import '../siq_file/siq_file.dart';
 import 'content_xml_parser.dart';
@@ -14,22 +16,46 @@ class SiqArchiveParser {
   SiqFile? _siqFile;
   SiqFile get file => _siqFile!;
 
+  InputFileStream? targetStream;
+  RamFileData? inputRamFileData;
+  Archive? archive;
+
   Future<SiqFile> parse({bool hashFiles = false}) async {
-    final targetStream = await InputFileStream.asRamFile(
-      _file.stream.map(Uint8List.fromList),
-      _file.fileLength,
-    );
-    final archive = ZipDecoder().decodeBuffer(
-      targetStream,
-      verify: false, //TODO: add option to verify
-    );
+    await _unzip();
 
-    _getContentFile(archive);
-    if (hashFiles) _hashFiles(archive);
+    final parseProgress = getIt.get<Logger>().progress('Parsing file');
+    _getContentFile(archive!);
+    parseProgress.complete();
 
-    targetStream.closeSync();
+    if (hashFiles) {
+      final hashProgress = getIt.get<Logger>().progress('Generating file hash');
+      _hashFiles(archive!);
+      hashProgress.complete();
+    }
+    close();
 
     return _siqFile!;
+  }
+
+  void close() {
+    targetStream?.closeSync();
+    inputRamFileData?.clear();
+    archive?.clearSync();
+  }
+
+  Future<void> _unzip() async {
+    if (archive != null) return;
+
+    final progress = getIt.get<Logger>().progress('Unziping archive');
+    inputRamFileData = await RamFileData.fromStream(
+        _file.stream.map(Uint8List.fromList), _file.fileLength);
+    targetStream = InputFileStream.withFileBuffer(
+        FileBuffer(RamFileHandle.fromRamFileData(inputRamFileData!)));
+    archive = ZipDecoder().decodeBuffer(
+      targetStream!,
+      verify: false, //TODO: add option to verify
+    );
+    progress.complete();
   }
 
   void _getContentFile(Archive archive) {
@@ -53,7 +79,7 @@ class SiqArchiveParser {
 
       //TODO: make this more memory efficient
       final content = archiveFile.content;
-      final fileWithHash = file.file.copyWithHash(content);
+      final fileWithHash = file.file.copyWithHash(content).copyWith(path: null);
 
       return file.copyWith(file: fileWithHash);
     });

@@ -65,7 +65,8 @@ class _FileOpeningState extends State<FileOpening> {
       fileLength: file.size,
       stream: file.readStream!,
     );
-    siqFile = await SiqArchiveParser(fileStream).parse(hashFiles: true);
+    final parser = SiqArchiveParser(fileStream);
+    siqFile = await parser.parse(hashFiles: true);
     setState(() {});
 
     final parseTime = DateTime.now().difference(now);

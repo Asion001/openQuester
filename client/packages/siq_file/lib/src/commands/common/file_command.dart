@@ -1,3 +1,5 @@
+import 'package:mason_logger/mason_logger.dart';
+import 'package:siq_file/src/getit.dart';
 import 'package:universal_io/io.dart';
 import 'package:args/command_runner.dart';
 import '../../parser/content_xml_parser.dart';
@@ -9,10 +11,17 @@ abstract class FileCommand extends Command<int> {
     String? xmlFilePath,
     bool hashFiles = false,
   }) async {
+    final importProgress = getIt.get<Logger>().progress('Importing');
+
+    SiqFile? siqFile;
     if (xmlFilePath == null) {
-      return await _getFromArchive(hashFiles);
+      siqFile = await _getFromArchive(hashFiles);
+    } else {
+      siqFile = _getFromXmlFile(xmlFilePath);
     }
-    return _getFromXmlFile(xmlFilePath);
+    importProgress.complete('Imported file ${siqFile.metadata.title}');
+
+    return siqFile;
   }
 
   SiqFile _getFromXmlFile(String xmlFilePath) {
@@ -33,9 +42,7 @@ abstract class FileCommand extends Command<int> {
     final target = argResults!.rest[0];
     final targetFile = File(target);
     final targetStream = FileStream(
-      stream: targetFile.openRead(),
-      fileLength: await targetFile.length(),
-    );
+        stream: targetFile.openRead(), fileLength: await targetFile.length());
     final siqArchive = SiqArchiveParser(targetStream);
     final siqFile = await siqArchive.parse(hashFiles: hashFiles);
 

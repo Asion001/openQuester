@@ -4,6 +4,7 @@ import 'package:mason_logger/mason_logger.dart';
 import 'package:args/args.dart';
 
 import 'commands/commands.dart';
+import 'getit.dart';
 import 'version.dart';
 
 class SiqFileCommandRunner extends CompletionCommandRunner<int> {
@@ -20,15 +21,21 @@ class SiqFileCommandRunner extends CompletionCommandRunner<int> {
         abbr: 'V',
       );
 
-    addCommand(ParseCommand(logger: _logger));
-    addCommand(JsonCommand(logger: _logger));
-    addCommand(HashCommand(logger: _logger));
+    getIt.registerSingleton<Logger>(_logger);
+
+    addCommand(ParseCommand());
+    addCommand(JsonCommand());
+    addCommand(HashCommand());
+    addCommand(UploadCommand());
   }
 
   final Logger _logger;
 
   @override
   void printUsage() => _logger.info(usage);
+
+  @override
+  bool get enableAutoInstall => false;
 
   @override
   Future<int> run(Iterable<String> args) async {

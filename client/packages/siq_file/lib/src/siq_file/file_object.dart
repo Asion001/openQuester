@@ -9,8 +9,8 @@ enum FileType { image, video, audio }
 @freezed
 class FileObject with _$FileObject {
   const factory FileObject({
-    required String path,
     required FileType type,
+    String? path,
     String? sha256,
   }) = _FileObject;
 
@@ -26,7 +26,7 @@ class FileObject with _$FileObject {
     return copyWith(sha256: sha256);
   }
 
-  String get fullPath => '${fileTypeToFolder[type]}/$path';
+  String get fullPath => '${fileTypeToFolder[type]}/${path ?? sha256}';
 }
 
 Map<FileType, String> fileTypeToFolder = {
